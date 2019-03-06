@@ -12,6 +12,11 @@ namespace Tracer {
             ClassName = method.DeclaringType.ToString() ?? string.Empty;
         }
 
+        private MethodMetadata()
+        {
+
+        }
+
         public string Name { get; set; }
 
         public string ClassName { get; set; }

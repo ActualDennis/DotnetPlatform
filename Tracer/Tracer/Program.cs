@@ -85,7 +85,7 @@ namespace Tracer {
             tracer.StopTrace();
 
             var logger = new FileLogger();
-            logger.Log(new TracerJsonSerializer().Serialize(tracer.GetTraceResult()));
+            logger.Log(new TracerXmlSerializer().Serialize(tracer.GetTraceResult()));
         }
 
         static void fourth(Tracer tracer)
