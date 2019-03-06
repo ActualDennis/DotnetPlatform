@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Tracer {
+    [XmlRoot(ElementName = "method")]
     public class MethodMetadata {
         public MethodMetadata(MethodBase method)
         {
@@ -16,13 +18,13 @@ namespace Tracer {
         {
 
         }
-
+        [XmlAttribute]
         public string Name { get; set; }
-
+        [XmlAttribute]
         public string ClassName { get; set; }
-
+        [XmlAttribute]
         public long ExecutionTime { get; set; }
-
+        [XmlElement(ElementName = "method")]
         public List<MethodMetadata> InnerMethods { get; private set; } = new List<MethodMetadata>();
 
         private Stopwatch watch { get; set; } = new Stopwatch();
