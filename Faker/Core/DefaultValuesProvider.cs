@@ -9,8 +9,8 @@ namespace Faker.Core {
         {
             TypesGenerators = new Dictionary<Type, IRandomValueGenerator>()
             {
-                {typeof(int), new IntLongValueGenerator()},
-                {typeof(long), new IntLongValueGenerator()},
+                {typeof(int), new IntValueGenerator()},
+                {typeof(long), new LongValueGenerator()},
                 {typeof(short), new ShortValueGenerator()},
                 {typeof(float), new FloatDoubleValueGenerator()},
                 {typeof(double), new FloatDoubleValueGenerator()},
@@ -26,8 +26,36 @@ namespace Faker.Core {
                 {typeof(List<DateTime>), new ListDateTimeValueGenerator()},
                 {typeof(List<byte>), new ListByteValueGenerator()}
             };
+
+            SimpleTypes = new List<Type>()
+            {
+                typeof(int),
+                typeof(long),
+                typeof(short),
+                typeof(float),
+                typeof(double),
+                typeof(string),
+                typeof(DateTime),
+                typeof(byte)
+            };
+
+            ListTypes = new List<Type>()
+            {
+                typeof(List<int>),
+                typeof(List<long>),
+                typeof(List<short>),
+                typeof(List<float>),
+                typeof(List<double>),
+                typeof(List<string>),
+                typeof(List<DateTime>),
+                typeof(List<byte>)
+            };
         }
         public static Dictionary<Type, IRandomValueGenerator> TypesGenerators { get; set; }
+
+        public static List<Type> SimpleTypes { get; set; }
+
+        public static List<Type> ListTypes { get; set; }
 
         public static object GenerateValue(Type typeOfValue)
         {
@@ -36,6 +64,23 @@ namespace Faker.Core {
             else
                 return null;
 
+        }
+
+        public static bool IsSupportedType(Type t)
+        {
+            foreach(var type in SimpleTypes)
+            {
+                if (t == type)
+                    return true;
+            }
+
+            foreach (var type in ListTypes)
+            {
+                if (t == type)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

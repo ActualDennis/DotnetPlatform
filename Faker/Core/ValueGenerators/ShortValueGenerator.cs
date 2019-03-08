@@ -6,7 +6,7 @@ namespace Faker.Core.ValueGenerators {
     public class ShortValueGenerator : IRandomValueGenerator {
         public object GenerateValue()
         {
-            return new Random().Next(0, short.MaxValue);
+            return (short)new Random().Next(0, short.MaxValue);
         }
     }
 }
