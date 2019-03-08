@@ -3,6 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Faker.Test {
+
+    public class Bar {
+        public Bar()
+        {
+
+        }
+
+        public string str { get; set; }
+    }
+
     public class Foo {
         public Foo()
         {
@@ -11,7 +21,7 @@ namespace Faker.Test {
 
         public string str { get; set; }
         public int integer { get; set; }
-        public Foo b { get; set; }
+        public Bar b { get; set; }
         public DateTime _time { get; set; }
 
         public int x { get; set; }

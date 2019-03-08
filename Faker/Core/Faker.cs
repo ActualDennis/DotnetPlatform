@@ -13,11 +13,11 @@ namespace Faker.Core {
             {
                 if (IsDto(typeof(TInput)))
                 {
-                    var result = (TInput)CreateDto(typeof(TInput));
+                    var result = (object)CreateDto(typeof(TInput));
 
-                    TryFillProperties(ref result);
+                    TryFillProperties(ref result, typeof(TInput));
 
-                    return result;
+                    return (TInput)result;
                 }
                 else
                 {
@@ -65,12 +65,12 @@ namespace Faker.Core {
             return constructor.Invoke(parametersArray);
         }
 
-        private bool TryFillProperties<TInput>(ref TInput input)
+        private bool TryFillProperties(ref object input,Type typeOfObject)
         {
             try
             {
 
-                var t = input.GetType();
+                var t = typeOfObject;
 
                 var publicProperties = t.GetProperties();
 
@@ -80,10 +80,20 @@ namespace Faker.Core {
 
                     if (IsDto(propertyType))
                     {
-                        var result = TryFillProperties(ref propertyType);
+                        object nestedDto;
 
-                        if (!result)
-                            return false;
+                        try
+                        {
+                            nestedDto = CreateDto(property.GetMethod.ReturnType);
+                            var result = TryFillProperties(ref nestedDto, property.GetMethod.ReturnType);
+                        }
+                        catch (Exception)
+                        {
+
+                            nestedDto = null;
+                        }
+                        
+                        property.SetValue(input, nestedDto);
 
                         continue;
                     }
@@ -99,6 +109,7 @@ namespace Faker.Core {
             }
             catch(Exception ex) { Console.WriteLine(ex.Message); return false; }
         }
+
 
         private bool IsDto(Type t)
         {
@@ -120,7 +131,7 @@ namespace Faker.Core {
 
                     try
                     {
-                        if (!IsDto(field.GetType()))
+                        if (!IsDto(field.FieldType))
                             return false;
                     }
                     catch (ArgumentException)
