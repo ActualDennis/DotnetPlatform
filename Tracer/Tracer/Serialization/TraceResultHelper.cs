@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Tracer.Serialization {
+namespace TracerLib.Serialization {
     public static class TraceResultHelper {
         public static TraceResultSerialized GetReadyToSerializeVersion(TraceResult value)
         {

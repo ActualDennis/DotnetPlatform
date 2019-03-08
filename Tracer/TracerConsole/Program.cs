@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Tracer.Logging;
-using Tracer.Serialization;
+using TracerLib.Logging;
+using TracerLib;
+using TracerLib.Serialization;
 
-namespace Tracer {
+namespace TracerConsole {
     class Program {
         static void Main(string[] args)
         {
@@ -65,7 +64,7 @@ namespace Tracer {
         }
 
         static void third(Tracer tracer)
-        { 
+        {
             tracer.StartTrace();
             second(tracer);
 
@@ -84,7 +83,7 @@ namespace Tracer {
 
             tracer.StopTrace();
 
-            var logger = new FileLogger();
+            var logger = new ConsoleLogger();
             logger.Log(new TracerXmlSerializer().Serialize(tracer.GetTraceResult()));
         }
 

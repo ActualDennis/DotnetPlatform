@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Tracer.Serialization {
+namespace TracerLib.Serialization {
     [XmlRoot(ElementName = "Root")]
     public class TraceResultSerialized {
         [XmlArray("threads")]

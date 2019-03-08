@@ -5,8 +5,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Tracer.Serialization {
-    class TracerXmlSerializer : ISerializer {
+namespace TracerLib.Serialization {
+    public class TracerXmlSerializer : ISerializer {
         public string Serialize(TraceResult value)
         {
             if (value == null)

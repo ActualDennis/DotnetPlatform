@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Tracer {
+namespace TracerLib {
     /// <summary>
     /// Class contains all info about methods in specific thread.
     /// </summary>

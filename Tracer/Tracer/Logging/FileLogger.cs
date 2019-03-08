@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Tracer.Logging {
+namespace TracerLib.Logging {
     public class FileLogger : ILogger {
 
         public const string DefaultLogPath = "H:/DenTracer/Logs.txt";

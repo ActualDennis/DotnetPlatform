@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tracer {
+namespace TracerLib {
     interface ITracer {
         void StartTrace();
 

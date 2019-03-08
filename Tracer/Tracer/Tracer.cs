@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 
-namespace Tracer {
+namespace TracerLib {
     public class Tracer : ITracer {
 
         public TraceResult GetTraceResult()
