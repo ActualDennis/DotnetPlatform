@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28621.142
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TracerLib", "Tracer\TracerLib.csproj", "{CDC20860-6162-4030-96D5-0600C74F4836}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tracer.Lib", "Tracer\Tracer.Lib.csproj", "{CDC20860-6162-4030-96D5-0600C74F4836}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracerConsole", "TracerConsole\TracerConsole.csproj", "{42408346-DB58-4775-9CF3-C93DFC452060}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tracer.Console", "TracerConsole\Tracer.Console.csproj", "{42408346-DB58-4775-9CF3-C93DFC452060}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracer.Test", "Tracer.Test\Tracer.Test.csproj", "{7D65FA15-5CB8-4DF3-A9CB-2452A561F02A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tracer.Test", "Tracer.Test\Tracer.Test.csproj", "{7D65FA15-5CB8-4DF3-A9CB-2452A561F02A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

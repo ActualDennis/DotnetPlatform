@@ -1,5 +1,4 @@
-﻿using Faker.Core;
-using Faker.Test;
+﻿using Faker.Data;
 using System;
 
 namespace Faker.Core {
@@ -14,6 +13,10 @@ namespace Faker.Core {
             catch (ArgumentException)
             {
                 Console.WriteLine("Failed to create dto.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
             Console.ReadLine();

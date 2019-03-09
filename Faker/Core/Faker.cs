@@ -11,9 +11,9 @@ namespace Faker.Core {
         {
             try
             {
-                if (IsDto(typeof(TInput)))
+                if (!AnyCircularDependencies(typeof(TInput)))
                 {
-                    var result = (object)CreateDto(typeof(TInput));
+                    var result = CreateDto(typeof(TInput));
 
                     TryFillProperties(ref result, typeof(TInput));
 
@@ -21,7 +21,7 @@ namespace Faker.Core {
                 }
                 else
                 {
-                    throw new ArgumentException("Parameter: TInput");
+                    throw new ArgumentException($"Parameter: {nameof(TInput).ToString()}, type did contain circular dependencies.");
                 }
             }
             catch (Exception ex)
@@ -32,6 +32,12 @@ namespace Faker.Core {
             
         }
 
+        /// <exception cref="ArgumentException">Throws if type doesn't have a contructor</exception>
+        /// <summary>
+        /// Creates dto using constructor.
+        /// </summary>
+        /// <param name="typeOfDto"></param>
+        /// <returns></returns>
         private object CreateDto(Type typeOfDto)
         {
             var constructors = typeOfDto.GetConstructors();
@@ -80,6 +86,7 @@ namespace Faker.Core {
 
                     if (IsDto(propertyType))
                     {
+                            
                         object nestedDto;
 
                         try
@@ -98,7 +105,20 @@ namespace Faker.Core {
                         continue;
                     }
 
+
                     var generatedValue = DefaultValuesProvider.GenerateValue(propertyType);
+
+                    if(generatedValue == null)
+                    {
+                        try
+                        {
+                            generatedValue = Activator.CreateInstance(propertyType);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine($"Type {propertyType.ToString()} is not a DTO and does not have parameterless constructor. Set this field to null.");
+                        }
+                    }
 
                     //if property of value type is set to null, it'll get default value.
 
@@ -116,34 +136,41 @@ namespace Faker.Core {
             if (DefaultValuesProvider.IsSupportedType(t))
                 return false;
 
+            if (t.Assembly.IsMicrosoftAssembly())
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if type has circular dependencies.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        private bool AnyCircularDependencies(Type t)
+        {
             if (ContainsCircularDependencies(t))
-            {
-                throw new ArgumentException("t : type did contain circular dependencies.");
-            }
+                return true;
 
             var fields = t.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-            foreach(var field in fields)
+            foreach (var field in fields)
             {
                 if (!DefaultValuesProvider.IsSupportedType(field.FieldType))
                 {
-                    dtoDependencies.Push(t);
-
-                    try
+                    if (!t.Assembly.IsMicrosoftAssembly())
                     {
-                        if (!IsDto(field.FieldType))
-                            return false;
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw;
-                    }
+                        dtoDependencies.Push(t);
 
-                    dtoDependencies.Pop();
+                        if (AnyCircularDependencies(field.FieldType))
+                            return true;
+
+                        dtoDependencies.Pop();
+                    }
                 }
             }
 
-            return true;
+            return false;
         }
 
         private bool ContainsCircularDependencies(Type t)
