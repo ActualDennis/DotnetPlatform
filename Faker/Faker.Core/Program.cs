@@ -1,4 +1,5 @@
-﻿using Faker.Data;
+﻿using Faker.Core.Additional_value_generators;
+using Faker.Data;
 using System;
 
 namespace Faker.Core {
@@ -7,7 +8,9 @@ namespace Faker.Core {
         {
             try
             {
-                var faker = new Faker();
+                var config = new FakerConfig();
+                config.Add<Foo, string, AlwaysOneValueGenerator>(foo => foo.str);
+                var faker = new Faker(config);
                 var result = faker.Create<Foo>();
             }
             catch (ArgumentException)

@@ -4,8 +4,14 @@ using System.Reflection;
 
 namespace Faker.Core {
     public class Faker {
+        public Faker(FakerConfig config)
+        {
+            customValueProvider = new CustomValueProvider(config);
+        }
 
         private Stack<Type> dtoDependencies { get; set; } = new Stack<Type>();
+
+        private CustomValueProvider customValueProvider { get; set; }
 
         public TInput Create<TInput>()
         {
@@ -83,6 +89,12 @@ namespace Faker.Core {
                 foreach (var property in publicProperties)
                 {
                     var propertyType = property.GetMethod.ReturnType;
+
+                    if (customValueProvider.HasDefinition(property))
+                    {
+                        property.SetValue(input, customValueProvider.GenerateValue(property));
+                        continue;
+                    }
 
                     if (IsDto(propertyType))
                     {
