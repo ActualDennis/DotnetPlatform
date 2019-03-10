@@ -9,9 +9,9 @@ namespace Faker.Core {
             try
             {
                 var config = new FakerConfig();
-                config.Add<Foo, string, AlwaysOneValueGenerator>(foo => foo.str);
+                config.Add<Person, string, AlwaysOneValueGenerator>(foo => foo.Name);
                 var faker = new Faker(config);
-                var result = faker.Create<Foo>();
+                var result = faker.Create<Person>();
             }
             catch (ArgumentException)
             {

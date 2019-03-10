@@ -13,13 +13,13 @@ namespace Faker.Core {
 
         private FakerConfig Config { get; set; }
         
-        public object GenerateValue(PropertyInfo property)
+        public object GenerateValue(string propertyName, Type propertyType, Type declaringType)
         {
             try
             {
                 return Config
                     .configs
-                    .Find(x => x.PropertyName == property.Name && x.PropertyType == property.PropertyType && x.TypeFor == property.DeclaringType)?
+                    .Find(x => x.PropertyName == propertyName && x.PropertyType == propertyType && x.TypeFor == declaringType)?
                     .Generator
                     .GenerateValue();
             }
@@ -29,9 +29,9 @@ namespace Faker.Core {
             }
         }
 
-        public bool HasDefinition(PropertyInfo property)
+        public bool HasDefinition(string propertyName, Type propertyType , Type declaringType)
         {
-            return Config.configs.Any(x => x.PropertyName == property.Name && x.PropertyType == property.PropertyType && x.TypeFor == property.DeclaringType);
+            return Config.configs.Any(x => x.PropertyName == propertyName && x.PropertyType == propertyType && x.TypeFor == declaringType);
         }
     }
 }

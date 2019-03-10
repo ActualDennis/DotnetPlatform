@@ -59,9 +59,17 @@ namespace Faker.Core {
 
             for (int i = 0; i < parameters.Length; ++i)
             {
-                var propertyType = parameters[i].GetType();
+                var propertyType = parameters[i].ParameterType;
+                object generatedValue;
 
-                var generatedValue = DefaultValuesProvider.GenerateValue(propertyType);
+                if (customValueProvider.HasDefinition(parameters[i].Name, propertyType, typeOfDto))
+                {
+                    generatedValue = customValueProvider.GenerateValue(parameters[i].Name, propertyType, typeOfDto);
+                    parametersArray[i] = generatedValue;
+                    continue;
+                }
+
+                generatedValue = DefaultValuesProvider.GenerateValue(propertyType);
 
                 if (generatedValue == null)
                 {
@@ -88,11 +96,16 @@ namespace Faker.Core {
 
                 foreach (var property in publicProperties)
                 {
+                    if (!property.CanWrite)
+                    {
+                        continue;
+                    }
+
                     var propertyType = property.GetMethod.ReturnType;
 
-                    if (customValueProvider.HasDefinition(property))
+                    if (customValueProvider.HasDefinition(property.Name, property.PropertyType, property.DeclaringType))
                     {
-                        property.SetValue(input, customValueProvider.GenerateValue(property));
+                        property.SetValue(input, customValueProvider.GenerateValue(property.Name, property.PropertyType, property.DeclaringType));
                         continue;
                     }
 
