@@ -46,7 +46,7 @@ namespace NUnitGen {
             var getTestClasses = new TransformBlock<Tuple<string, string>, Tuple<string, string>>(
                new Func<Tuple<string, string>, Task<Tuple<string, string>>>(GetTestClasses), maxTasksExecutedTasks);
 
-            var writeResult = new ActionBlock<Tuple<string, string>(async input =>
+            var writeResult = new ActionBlock<Tuple<string, string>>(async input =>
             {
                 await WriteResult(input);
             }, maxFilesToWriteTasks);
@@ -56,9 +56,7 @@ namespace NUnitGen {
 
             while(inputFiles.Count != 0)
             {
-                var file = inputFiles.Pop();
-
-                loadFiles.Post(file);
+                loadFiles.Post(inputFiles.Pop());
             }
         }
 

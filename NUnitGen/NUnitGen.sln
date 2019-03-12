@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28705.295
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitGen", "NUnitGen\NUnitGen.csproj", "{A9609287-F72D-48C5-9D40-82C01AD41482}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitGen.Core", "NUnitGen\NUnitGen.Core.csproj", "{A9609287-F72D-48C5-9D40-82C01AD41482}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitGen.Tests", "NUnitGen.Tests\NUnitGen.Tests.csproj", "{81274083-B57D-42F0-A765-F29935091D5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A9609287-F72D-48C5-9D40-82C01AD41482}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9609287-F72D-48C5-9D40-82C01AD41482}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9609287-F72D-48C5-9D40-82C01AD41482}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81274083-B57D-42F0-A765-F29935091D5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81274083-B57D-42F0-A765-F29935091D5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81274083-B57D-42F0-A765-F29935091D5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81274083-B57D-42F0-A765-F29935091D5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

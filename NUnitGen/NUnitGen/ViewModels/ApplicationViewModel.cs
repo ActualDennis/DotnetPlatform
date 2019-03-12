@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using NUnitGen.Helpers;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -13,7 +15,9 @@ namespace NUnitGen {
 
         public ApplicationViewModel()
         {
-            this.pipeLine = new PipeLine();
+            pipeLine = new PipeLine();
+            LoadedClasses = new List<string>();
+            LoadedClassesUI = new ObservableCollection<string>();
         }
 
         public string MaxFilesToWrite { get; set; }
@@ -22,7 +26,9 @@ namespace NUnitGen {
 
         public string MaxFilesToLoad { get; set; }
 
-        private List<string> LoadedClasses { get; set; }
+        public List<string> LoadedClasses { get; set; }
+
+        public ObservableCollection<string> LoadedClassesUI { get; set; }
 
         public ICommand ExecuteCommand => new RelayCommand(() => Execute(null), null);
 
@@ -40,22 +46,36 @@ namespace NUnitGen {
                 return;
 
             LoadedClasses.Add(dialog.FileName);
+            LoadedClassesUI.Add(dialog.FileName);
         }
 
         private void Execute(object p)
         {
-            var dialog = new FolderBrowserDialog();
-            DialogResult result = dialog.ShowDialog();
+            try
+            {
+                var dialog = new FolderBrowserDialog();
+                DialogResult result = dialog.ShowDialog();
 
-            if (result != DialogResult.OK || string.IsNullOrWhiteSpace(dialog.SelectedPath))
-                return;
+                if (result != DialogResult.OK || string.IsNullOrWhiteSpace(dialog.SelectedPath))
+                    return;
 
-            pipeLine.maxFilesToLoad = int.Parse(MaxFilesToLoad);
-            pipeLine.maxFilesToWrite = int.Parse(MaxFilesToWrite);
-            pipeLine.maxTasksExecuted = int.Parse(MaxTasksExecuted);
-            pipeLine.outputFile = dialog.SelectedPath;
+                pipeLine.maxFilesToLoad = int.Parse(MaxFilesToLoad) == 0 ? 1 : int.Parse(MaxFilesToLoad);
+                pipeLine.maxFilesToWrite = int.Parse(MaxFilesToWrite) == 0 ? 1 : int.Parse(MaxFilesToWrite);
+                pipeLine.maxTasksExecuted = int.Parse(MaxTasksExecuted) == 0 ? 1 : int.Parse(MaxTasksExecuted);
+                pipeLine.outputFile = dialog.SelectedPath;
 
-            pipeLine.Start(new Stack<string>(LoadedClasses));
+                pipeLine.Start(new Stack<string>(LoadedClasses));
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                LoadedClasses = new List<string>();
+                LoadedClassesUI = new ObservableCollection<string>();
+            }
         }
 
     }

@@ -46,7 +46,7 @@ namespace NUnitGen.Parsers {
                 {
                     Methods = GetClassMethods(Class),
                     Name = Class.Identifier.ToString(),
-                    NameSpace = DefaultValues.DefaultNameSpace
+                    NameSpace = ((NamespaceDeclarationSyntax)Class.Parent).Name.ToString()
                 });
             }
 

@@ -5,8 +5,54 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NUnitGen"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="350" Width="1100">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Button Height="60" Width="180" Grid.Row="1"  Content="Add a class file" Command="{Binding AddClassCommand}"/>
+
+            <Button Height="60" Width="180" Grid.Row="2" Content="Generate test classes" Command="{Binding ExecuteCommand}"/>
+
+            <Grid>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Width="120" Height="30" Text="Maximum amount of files to read from disk." TextWrapping="Wrap"/>
+
+                <TextBlock Width="120" Height="30" Grid.Row="1" Text="Maximum amount of files to write to disk." TextWrapping="Wrap"/>
+
+                <TextBlock Width="120" Height="30" Grid.Row="2" Text="Maximum amount of tasks to be executed." TextWrapping="Wrap" />
+
+                <TextBox Width="120" Height="30" Grid.Column="1" Text="{Binding MaxFilesToLoad}"/>
+
+                <TextBox Width="120" Height="30" Grid.Row="1" Grid.Column="1" Text="{Binding MaxFilesToWrite}" />
+
+                <TextBox Width="120" Height="30" Grid.Row="2" Grid.Column="1" Text="{Binding MaxTasksExecuted}"/>
+            </Grid>
+        </Grid>
+
+        <ItemsControl Grid.Column="1" ItemsSource="{Binding LoadedClassesUI}">
+            
+        </ItemsControl>
         
     </Grid>
 </Window>
