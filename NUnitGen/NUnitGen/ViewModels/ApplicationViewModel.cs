@@ -28,7 +28,6 @@ namespace NUnitGen {
         public ICommand AddClassCommand => new RelayCommand(() => AddClass(null), null);
 
 
-
         private void AddClass(object p)
         {
             var dialog = new OpenFileDialog();
@@ -51,6 +50,7 @@ namespace NUnitGen {
                 return;
 
             var destination = dialog.FileName;
+
         }
 
     }
