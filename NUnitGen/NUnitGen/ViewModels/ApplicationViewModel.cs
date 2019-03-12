@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using NUnitGen.Helpers;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace NUnitGen {
@@ -12,7 +13,7 @@ namespace NUnitGen {
 
         public ApplicationViewModel()
         {
-            
+            this.pipeLine = new PipeLine();
         }
 
         public string MaxFilesToWrite { get; set; }
@@ -27,10 +28,11 @@ namespace NUnitGen {
 
         public ICommand AddClassCommand => new RelayCommand(() => AddClass(null), null);
 
+        private PipeLine pipeLine { get; set; }
 
         private void AddClass(object p)
         {
-            var dialog = new OpenFileDialog();
+            var dialog = new Microsoft.Win32.OpenFileDialog();
             dialog.Filter = "C# class file(*.cs)|*.cs";
             var result = dialog.ShowDialog();
 
@@ -42,15 +44,18 @@ namespace NUnitGen {
 
         private void Execute(object p)
         {
-            var dialog = new SaveFileDialog();
-            dialog.Filter = "C# NUnit test file(*.cs)|*.cs";
-            var result = dialog.ShowDialog();
+            var dialog = new FolderBrowserDialog();
+            DialogResult result = dialog.ShowDialog();
 
-            if (result == null || result == false)
+            if (result != DialogResult.OK || string.IsNullOrWhiteSpace(dialog.SelectedPath))
                 return;
 
-            var destination = dialog.FileName;
+            pipeLine.maxFilesToLoad = int.Parse(MaxFilesToLoad);
+            pipeLine.maxFilesToWrite = int.Parse(MaxFilesToWrite);
+            pipeLine.maxTasksExecuted = int.Parse(MaxTasksExecuted);
+            pipeLine.outputFile = dialog.SelectedPath;
 
+            pipeLine.Start(new Stack<string>(LoadedClasses));
         }
 
     }

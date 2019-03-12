@@ -1,10 +1,12 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using NUnitGen.CodeGenerators;
 using NUnitGen.Data;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,16 +14,13 @@ using System.Threading.Tasks;
 namespace NUnitGen.Parsers {
     public static class CSharpParser {
 
-        public static async Task<Dictionary<string, string>> GenerateNUnitTestClasses(Dictionary<string, string> filesText)
+        public static async Task<Tuple<string, string>> GenerateNUnitTestClasses(Tuple<string, string> fileText)
         {
-            var result = new Dictionary<string, string>();
+            var treeRoot = await CSharpSyntaxTree.ParseText(fileText.Item2).GetRootAsync();
 
-            foreach(var item in filesText)
-            { 
-               var treeRoot = await CSharpSyntaxTree.ParseText(item.Value).GetRootAsync();
-
-                result.Add(item.Key, GenerateTestClass(treeRoot));
-            }
+            return new Tuple<string,string>(
+                Path.GetFileNameWithoutExtension(fileText.Item1) + "NUnitTest.cs",
+                GenerateTestClass(treeRoot));
         }
 
         private static List<string> GetClassMethods(ClassDeclarationSyntax Class)
@@ -36,6 +35,7 @@ namespace NUnitGen.Parsers {
 
         private static string GenerateTestClass(SyntaxNode root)
         {
+            //there may be more than one class in one file
             var classesInfo = new List<ClassMetadata>();
 
             var classes = new List<ClassDeclarationSyntax>(root.DescendantNodes().OfType<ClassDeclarationSyntax>());
@@ -50,7 +50,7 @@ namespace NUnitGen.Parsers {
                 });
             }
 
-            
+            return TestClassesGenerator.Generate(classesInfo);
         }
     }
 }
