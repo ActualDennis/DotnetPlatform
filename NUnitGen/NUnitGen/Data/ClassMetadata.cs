@@ -11,5 +11,7 @@ namespace NUnitGen.Data {
         public string Name { get; set; }
 
         public string NameSpace { get; set; }
+
+        public IEnumerable<ParameterMetadata> Dependencies { get; set; }
     }
 }

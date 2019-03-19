@@ -191,6 +191,7 @@
     <Compile Include="CodeGenerators\TestClassesGenerator.cs" />
     <Compile Include="Data\ClassMetadata.cs" />
     <Compile Include="Data\DefaultValues.cs" />
+    <Compile Include="Data\ParameterMetadata.cs" />
     <Compile Include="Parsers\CSharpParser.cs" />
     <Compile Include="ViewModels\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />

@@ -33,6 +33,38 @@ namespace NUnitGen.Parsers {
                 .Select(element => element.Identifier.ToString()));
         }
 
+        private static IEnumerable<ParameterMetadata> GetClassDependencies(ClassDeclarationSyntax Class)
+        {
+            var constructors = Class.DescendantNodes()
+                .OfType<ConstructorDeclarationSyntax>()
+                .Where(method => method.Modifiers
+                .Any(modifier => modifier.ToString() == "public"));
+
+            foreach(var constructor in constructors)
+            {
+                var dependencies = constructor.ParameterList.Parameters.Where(param => 
+                ((IdentifierNameSyntax)param.Type)
+                .Identifier
+                .Value
+                .ToString()
+                .StartsWith("I"));
+
+                if (!dependencies.Count().Equals(0))
+                    return dependencies.Select(param => new ParameterMetadata()
+                    {
+                        Name = param.Identifier.Value.ToString(),
+                        TypeName = ((IdentifierNameSyntax)param.Type)
+                        .Identifier
+                        .Value
+                        .ToString()
+                    });
+            }
+
+            // no dependencies were found
+
+            return null;
+        }
+
         private static string GenerateTestClass(SyntaxNode root)
         {
             //there may be more than one class in one file
@@ -46,7 +78,8 @@ namespace NUnitGen.Parsers {
                 {
                     Methods = GetClassMethods(Class),
                     Name = Class.Identifier.ToString(),
-                    NameSpace = ((NamespaceDeclarationSyntax)Class.Parent).Name.ToString()
+                    NameSpace = ((NamespaceDeclarationSyntax)Class.Parent).Name.ToString(),
+                    Dependencies = GetClassDependencies(Class)
                 });
             }
 
