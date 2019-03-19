@@ -21,7 +21,7 @@ namespace NUnitGen.CodeGenerators {
             foreach (ClassMetadata Class in classInfo)
             {
                 NamespaceDeclarationSyntax namespaceDeclaration = NamespaceDeclaration(
-                    QualifiedName(IdentifierName(Class.Name), IdentifierName("NUnitTests")));
+                    QualifiedName(IdentifierName(Class.NameSpace), IdentifierName("NUnitTests")));
 
                 CompilationUnitSyntax testClass = CompilationUnit()
                     .WithUsings(GetDefaultUsings(Class))
@@ -216,12 +216,12 @@ namespace NUnitGen.CodeGenerators {
 
             var statements = new List<StatementSyntax>();
 
-            statements.Add(ParseStatement(Class.Name.GetTestClassName() + " = new " + Class.Name + "();"));
-
-            foreach (var dependency in Class.Dependencies)
+                        foreach (var dependency in Class.Dependencies)
             {
                 statements.Add(ParseStatement(dependency.Name + " = new " + dependency.Type.GetTypeName().GetMockObjectDeclaration() + "();"));
             }
+
+            statements.Add(ParseStatement(Class.Name.GetTestClassName() + " = new " + Class.Name + "("+ Class.Dependencies.Select(x =>x.Name).ToList().AsMethodParameters()  +");"));
 
             return Block(new SyntaxList<StatementSyntax>(statements));           
         }
