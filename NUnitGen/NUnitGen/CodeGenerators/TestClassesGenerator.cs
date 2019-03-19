@@ -15,7 +15,7 @@ namespace NUnitGen.CodeGenerators {
 
         private static string variableNameAlphabet => "abcdefghijklmABCDEFGHIJKLMNOPQRSTUVWXYZnopqrst0123456789uvwxyz";
 
-        public static string Generate(List<ClassMetadata> classInfo)
+        public static string Generate(List<ClassMetadata> classInfo, List<UsingDirectiveSyntax> usings)
         {
             var result = string.Empty;
             foreach (ClassMetadata Class in classInfo)
@@ -24,7 +24,7 @@ namespace NUnitGen.CodeGenerators {
                     QualifiedName(IdentifierName(Class.NameSpace), IdentifierName("NUnitTests")));
 
                 CompilationUnitSyntax testClass = CompilationUnit()
-                    .WithUsings(GetDefaultUsings(Class))
+                    .WithUsings(GetDefaultUsings(Class, usings))
                     .WithMembers(SingletonList<MemberDeclarationSyntax>(
                         namespaceDeclaration
                         .WithMembers(SingletonList<MemberDeclarationSyntax>(
@@ -80,26 +80,23 @@ namespace NUnitGen.CodeGenerators {
             return new SyntaxList<MemberDeclarationSyntax>(result);
         }
 
-        private static SyntaxList<UsingDirectiveSyntax> GetDefaultUsings(ClassMetadata Class)
+        private static SyntaxList<UsingDirectiveSyntax> GetDefaultUsings(ClassMetadata Class, List<UsingDirectiveSyntax> classUsings)
         {
-            return new SyntaxList<UsingDirectiveSyntax>(new List<UsingDirectiveSyntax>()
-            {
-                 UsingDirective(IdentifierName("System")),
-                 UsingDirective(IdentifierName("Moq")),
-                 UsingDirective
+            classUsings.Add(UsingDirective(IdentifierName("Moq")));
+            classUsings.Add(UsingDirective
                  (
                     QualifiedName
                     (
                         IdentifierName("NUnit"),
                         IdentifierName("Framework")
                     )
-                 ),
-                 UsingDirective
+                 ));
+            classUsings.Add(UsingDirective
                  (
                     IdentifierName(Class.NameSpace)
-                 )
-            }
-            );
+                 ));
+
+            return new SyntaxList<UsingDirectiveSyntax>(classUsings);
            
         }
 
@@ -176,7 +173,7 @@ namespace NUnitGen.CodeGenerators {
 
             if (method.ReturnType.GetTypeName() == "void")
             {
-                statements.Add(ParseStatement($"Assert.DoesNotThrow({Class.Name.GetTestClassName()}.{method.Name}({parametersNames.AsMethodParameters()}));"));
+                statements.Add(ParseStatement($"Assert.DoesNotThrow(() => {Class.Name.GetTestClassName()}.{method.Name}({parametersNames.AsMethodParameters()}));"));
                 return Block(statements);
             }
 
@@ -216,7 +213,7 @@ namespace NUnitGen.CodeGenerators {
 
             var statements = new List<StatementSyntax>();
 
-                        foreach (var dependency in Class.Dependencies)
+            foreach (var dependency in Class.Dependencies)
             {
                 statements.Add(ParseStatement(dependency.Name + " = new " + dependency.Type.GetTypeName().GetMockObjectDeclaration() + "();"));
             }

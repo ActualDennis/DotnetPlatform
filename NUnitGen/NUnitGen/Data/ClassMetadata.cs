@@ -13,8 +13,6 @@ namespace NUnitGen.Data {
 
         public string NameSpace { get; set; }
 
-        public TypeSyntax TypeInfo { get; set; }
-
         public IEnumerable<ParameterMetadata> Dependencies { get; set; }
     }
 }

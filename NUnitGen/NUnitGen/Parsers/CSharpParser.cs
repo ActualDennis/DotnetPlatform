@@ -79,7 +79,9 @@ namespace NUnitGen.Parsers {
 
             var classes = new List<ClassDeclarationSyntax>(root.DescendantNodes().OfType<ClassDeclarationSyntax>());
 
-            foreach(var Class in classes)
+            var usings = new List<UsingDirectiveSyntax>(root.DescendantNodes().OfType<UsingDirectiveSyntax>());
+
+            foreach (var Class in classes)
             {
                 classesInfo.Add(new ClassMetadata()
                 {
@@ -87,12 +89,11 @@ namespace NUnitGen.Parsers {
                     Name = Class.Identifier.ToString(),
                     NameSpace = ((NamespaceDeclarationSyntax)Class.Parent).Name.ToString(),
                     Dependencies = GetClassDependencies(Class),
-                    //TypeInfo = Class.Type
-                    
+                   
                 });
             }
 
-            return TestClassesGenerator.Generate(classesInfo);
+            return TestClassesGenerator.Generate(classesInfo, usings);
         }
     }
 }
