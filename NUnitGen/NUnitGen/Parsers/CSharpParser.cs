@@ -43,12 +43,7 @@ namespace NUnitGen.Parsers {
         private static IEnumerable<ParameterMetadata> GetParametersMetadata(MethodDeclarationSyntax method)
         {
             return method.ParameterList.Parameters.Select(param => new ParameterMetadata()
-            { Name = ((IdentifierNameSyntax)param.Type)
-                .Identifier
-                .Value
-                .ToString(),
-                Type = param.Type
-            });
+            { Name = param.Type.GetTypeName(), Type = param.Type });
         }
 
         private static IEnumerable<ParameterMetadata> GetClassDependencies(ClassDeclarationSyntax Class)
@@ -61,10 +56,7 @@ namespace NUnitGen.Parsers {
             foreach(var constructor in constructors)
             {
                 var dependencies = constructor.ParameterList.Parameters.Where(param => 
-                ((IdentifierNameSyntax)param.Type)
-                .Identifier
-                .Value
-                .ToString()
+                param.Type.GetTypeName()
                 .StartsWith("I"));
 
                 if (!dependencies.Count().Equals(0))

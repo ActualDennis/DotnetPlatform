@@ -16,11 +16,12 @@ namespace Tests {
             pipeLine.maxFilesToLoad = 5;
             pipeLine.maxFilesToWrite = 5;
             pipeLine.maxTasksExecuted = 5;
+          //  Assert.DoesNotThrow(BasicTest(x);
             pipeLine.outputFile = "H:";
         }
 
         [Test]
-        public void BasicTest()
+        public void BasicTest(int x)
         {
             //var st = new Stack<string>();
             //st.Push();

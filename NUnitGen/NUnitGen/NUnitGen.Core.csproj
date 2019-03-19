@@ -193,8 +193,11 @@
     <Compile Include="Data\DefaultValues.cs" />
     <Compile Include="Data\MethodMetadata.cs" />
     <Compile Include="Data\ParameterMetadata.cs" />
+    <Compile Include="ListStringExtensions.cs" />
+    <Compile Include="Misc\DefaultValuesProvider.cs" />
     <Compile Include="Parsers\CSharpParser.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="TypeSyntaxExtensions.cs" />
     <Compile Include="ViewModels\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Page Include="MainWindow.xaml">
