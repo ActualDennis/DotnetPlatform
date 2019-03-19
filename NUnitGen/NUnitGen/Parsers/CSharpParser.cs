@@ -53,10 +53,7 @@ namespace NUnitGen.Parsers {
                     return dependencies.Select(param => new ParameterMetadata()
                     {
                         Name = param.Identifier.Value.ToString(),
-                        TypeName = ((IdentifierNameSyntax)param.Type)
-                        .Identifier
-                        .Value
-                        .ToString()
+                        Type = param.Type
                     });
             }
 
@@ -79,7 +76,9 @@ namespace NUnitGen.Parsers {
                     Methods = GetClassMethods(Class),
                     Name = Class.Identifier.ToString(),
                     NameSpace = ((NamespaceDeclarationSyntax)Class.Parent).Name.ToString(),
-                    Dependencies = GetClassDependencies(Class)
+                    Dependencies = GetClassDependencies(Class),
+                    //TypeInfo = Class.Type
+                    
                 });
             }
 

@@ -23,20 +23,59 @@ namespace NUnitGen.CodeGenerators {
                     .WithUsings(GetDefaultUsings(Class))
                     .WithMembers(SingletonList<MemberDeclarationSyntax>(
                         namespaceDeclaration
-                        .WithMembers(SingletonList<MemberDeclarationSyntax>(ClassDeclaration(Class.Name + "NUnitTests")
+                        .WithMembers(SingletonList<MemberDeclarationSyntax>(
+
+                            ClassDeclaration(Class.Name + "NUnitTests")
+
                             .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+
                             .WithAttributeLists(
                                 SingletonList(
                                     AttributeList(
                                         SingletonSeparatedList(
                                             Attribute(
                                                 IdentifierName("TestFixture"))))))
+
+                            .WithMembers(GetTestClassDependencies(Class))
                             .WithMembers(GetMethods(Class))))));
 
                 result += testClass.NormalizeWhitespace().ToFullString();
             }
 
             return result;
+        }
+
+        private static SyntaxList<MemberDeclarationSyntax> GetTestClassDependencies(ClassMetadata Class)
+        {
+            var result = new List<MemberDeclarationSyntax>();
+
+            result.Add(PropertyDeclaration(
+                ParseTypeName(Class.Name), "_" + Class.Name.ToLower()[0] + Class.Name.Substring(1))
+                 .AddModifiers(Token(SyntaxKind.PrivateKeyword))
+                .AddAccessorListAccessors(
+                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                ));
+
+            if (Class.Dependencies == null)
+                return new SyntaxList<MemberDeclarationSyntax>(result);
+
+            foreach (var dependency in Class.Dependencies)
+            {
+                result.Add(
+                    PropertyDeclaration(dependency.Type, dependency.Name)
+                    .AddModifiers(Token(SyntaxKind.PrivateKeyword))
+                    .AddAccessorListAccessors(
+                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                ));
+            }
+
+            return new SyntaxList<MemberDeclarationSyntax>(result);
         }
 
         private static SyntaxList<UsingDirectiveSyntax> GetDefaultUsings(ClassMetadata Class)
