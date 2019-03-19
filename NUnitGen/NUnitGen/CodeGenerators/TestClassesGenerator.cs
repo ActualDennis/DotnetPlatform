@@ -25,6 +25,12 @@ namespace NUnitGen.CodeGenerators {
                         namespaceDeclaration
                         .WithMembers(SingletonList<MemberDeclarationSyntax>(ClassDeclaration(Class.Name + "NUnitTests")
                             .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+                            .WithAttributeLists(
+                                SingletonList(
+                                    AttributeList(
+                                        SingletonSeparatedList(
+                                            Attribute(
+                                                IdentifierName("TestFixture"))))))
                             .WithMembers(GetMethods(Class))))));
 
                 result += testClass.NormalizeWhitespace().ToFullString();
