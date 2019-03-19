@@ -194,6 +194,7 @@
     <Compile Include="Data\MethodMetadata.cs" />
     <Compile Include="Data\ParameterMetadata.cs" />
     <Compile Include="Parsers\CSharpParser.cs" />
+    <Compile Include="StringExtensions.cs" />
     <Compile Include="ViewModels\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Page Include="MainWindow.xaml">

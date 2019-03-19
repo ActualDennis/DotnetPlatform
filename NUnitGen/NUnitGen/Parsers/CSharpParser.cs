@@ -40,7 +40,7 @@ namespace NUnitGen.Parsers {
             return result;
         }
 
-        private static List<ParameterMetadata> GetParametersMetadata(MethodDeclarationSyntax method)
+        private static IEnumerable<ParameterMetadata> GetParametersMetadata(MethodDeclarationSyntax method)
         {
             return method.ParameterList.Parameters.Select(param => new ParameterMetadata()
             { Name = ((IdentifierNameSyntax)param.Type)
@@ -48,7 +48,7 @@ namespace NUnitGen.Parsers {
                 .Value
                 .ToString(),
                 Type = param.Type
-            }).ToList();
+            });
         }
 
         private static IEnumerable<ParameterMetadata> GetClassDependencies(ClassDeclarationSyntax Class)

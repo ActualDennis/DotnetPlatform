@@ -9,6 +9,6 @@ namespace NUnitGen.Data {
     public class MethodMetadata {
         public string Name;
         public TypeSyntax ReturnType;
-        public List<ParameterMetadata> parameters;
+        public IEnumerable<ParameterMetadata> parameters;
     }
 }

@@ -48,7 +48,7 @@ namespace NUnitGen.CodeGenerators {
             var result = new List<MemberDeclarationSyntax>();
 
             result.Add(PropertyDeclaration(
-                ParseTypeName(Class.Name), "_" + Class.Name.ToLower()[0] + Class.Name.Substring(1))
+                ParseTypeName(Class.Name), Class.Name.GetTestClassName())
                  .AddModifiers(Token(SyntaxKind.PrivateKeyword))
                 .AddAccessorListAccessors(
                     AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
@@ -63,7 +63,10 @@ namespace NUnitGen.CodeGenerators {
             foreach (var dependency in Class.Dependencies)
             {
                 result.Add(
-                    PropertyDeclaration(dependency.Type, dependency.Name)
+                    PropertyDeclaration(ParseTypeName(((IdentifierNameSyntax)dependency.Type)
+                .Identifier
+                .Value
+                .ToString().GetMockObjectDeclaration()), dependency.Name)
                     .AddModifiers(Token(SyntaxKind.PrivateKeyword))
                     .AddAccessorListAccessors(
                     AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
@@ -81,6 +84,7 @@ namespace NUnitGen.CodeGenerators {
             return new SyntaxList<UsingDirectiveSyntax>(new List<UsingDirectiveSyntax>()
             {
                  UsingDirective(IdentifierName("System")),
+                 UsingDirective(IdentifierName("Moq")),
                  UsingDirective
                  (
                     QualifiedName
@@ -116,7 +120,7 @@ namespace NUnitGen.CodeGenerators {
                             Attribute(
                                 IdentifierName("SetUp"))))))
             .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-            .WithBody(Block())
+            .WithBody(GetSetupMethodBody(Class))
             );
 
             //every other method
@@ -140,9 +144,29 @@ namespace NUnitGen.CodeGenerators {
             return new SyntaxList<MemberDeclarationSyntax>(methodsAndProperties);
         }
 
-        private static BlockSyntax GetTestMethodBody(MethodMetadata method)
-        {
+        //private static BlockSyntax GetTestMethodBody(MethodMetadata method)
+        //{
 
+        //}
+
+        private static BlockSyntax GetSetupMethodBody(ClassMetadata Class)
+        {
+            if (Class.Dependencies == null || Class.Dependencies.Count() == 0)
+                return Block();
+
+            var statements = new List<StatementSyntax>();
+
+            statements.Add(ParseStatement(Class.Name.GetTestClassName() + " = new " + Class.Name + "();"));
+
+            foreach (var dependency in Class.Dependencies)
+            {
+                statements.Add(ParseStatement(dependency.Name + " = new " + ((IdentifierNameSyntax)dependency.Type)
+                .Identifier
+                .Value
+                .ToString().GetMockObjectDeclaration() + "();"));
+            }
+
+            return Block(new SyntaxList<StatementSyntax>(statements));           
         }
     }
 }
