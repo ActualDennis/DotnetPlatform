@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NUnitGen.Data {
     public class ClassMetadata {
-        public List<string> Methods { get; set; }
+        public List<MethodMetadata> Methods { get; set; }
 
         public string Name { get; set; }
 

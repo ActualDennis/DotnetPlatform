@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NUnitGen.Data {
-    public class ParameterMetadata {
+    public class MethodMetadata {
         public string Name;
-        public TypeSyntax Type;
-    } 
+        public TypeSyntax ReturnType;
+        public List<ParameterMetadata> parameters;
+    }
 }

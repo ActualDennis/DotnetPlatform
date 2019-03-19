@@ -23,14 +23,32 @@ namespace NUnitGen.Parsers {
                 GenerateTestClass(treeRoot));
         }
 
-        private static List<string> GetClassMethods(ClassDeclarationSyntax Class)
+        private static List<MethodMetadata> GetClassMethods(ClassDeclarationSyntax Class)
         {
-            return new List<string>(
-                Class.DescendantNodes()
+            var methods = Class.DescendantNodes()
                 .OfType<MethodDeclarationSyntax>()
                 .Where(method => method.Modifiers
-                .Any(modifier => modifier.ToString() == "public"))
-                .Select(element => element.Identifier.ToString()));
+                .Any(modifier => modifier.ToString() == "public"));
+
+            var result = new List<MethodMetadata>();
+
+            foreach(var method in methods)
+            {
+                result.Add(new MethodMetadata() { Name = method.Identifier.ToString(), ReturnType = method.ReturnType, parameters = GetParametersMetadata(method) });
+            }
+
+            return result;
+        }
+
+        private static List<ParameterMetadata> GetParametersMetadata(MethodDeclarationSyntax method)
+        {
+            return method.ParameterList.Parameters.Select(param => new ParameterMetadata()
+            { Name = ((IdentifierNameSyntax)param.Type)
+                .Identifier
+                .Value
+                .ToString(),
+                Type = param.Type
+            }).ToList();
         }
 
         private static IEnumerable<ParameterMetadata> GetClassDependencies(ClassDeclarationSyntax Class)
