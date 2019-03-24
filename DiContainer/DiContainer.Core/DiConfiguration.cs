@@ -12,19 +12,30 @@ namespace DiContainer.Core {
         }
 
         public List<ContainerEntity> Configuration { get; private set; }
-        
+
+        public void RegisterTransient(Type interfaceType, Type implementationType)
+        {
+            RegisterCore(interfaceType, implementationType, ObjLifetime.Transient);
+        }
+
+        public void RegisterSingleton(Type interfaceType, Type implementationType)
+        {
+            RegisterCore(interfaceType, implementationType, ObjLifetime.Singleton);
+        }
+
+
         public void RegisterTransient<TInterface, TImplementation>() 
             where TInterface : class
             where TImplementation : class
         {
-            RegisterCore<TInterface, TImplementation>(ObjLifetime.Transient);
+            RegisterCore(typeof(TInterface), typeof(TImplementation),ObjLifetime.Transient);
         }
 
         public void RegisterSingleton<TInterface, TImplementation>()
             where TInterface : class 
             where TImplementation : class
         {
-            RegisterCore<TInterface, TImplementation>(ObjLifetime.Singleton);
+            RegisterCore(typeof(TInterface), typeof(TImplementation), ObjLifetime.Singleton);
         }
 
         public ObjLifetime GetObjectLifeTime(Type implType)
@@ -32,11 +43,8 @@ namespace DiContainer.Core {
             return (from conf in Configuration from impl in conf.Implementations where impl.ImplType == implType select impl.LifeTime).First();
         }
 
-        private void RegisterCore<TInterface, TImplementation>(ObjLifetime lifetime)
+        private void RegisterCore(Type interfaceType, Type implementationType,  ObjLifetime lifetime)
         {
-            var interfaceType = typeof(TInterface);
-
-            var implementationType = typeof(TImplementation);
 
             if (!interfaceType.IsAssignableFrom(implementationType))
                 throw new InvalidOperationException($"Type {implementationType.ToString()} is not assignable from {interfaceType.ToString()}");

@@ -1,5 +1,6 @@
 using DiContainer.Core;
 using DiContainer.Tests.TestData;
+using DiContainer.Tests.TestData.Generics;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +17,20 @@ namespace Tests {
         }
 
         [Test]
-        public void Basic()
+        public void BasicTest()
+        { 
+            config.RegisterSingleton<IProduct, FirstProduct>();
+            config.RegisterTransient<IUser, User>();
+
+            provider = new DependencyProvider(config);
+            
+            var item = provider.Resolve<IProduct>();
+
+            Assert.That(item != null);
+        }
+
+        [Test]
+        public void ManyTest()
         {
             config.RegisterSingleton<IProduct, FirstProduct>();
             config.RegisterSingleton<IProduct, SecondProduct>();
@@ -28,5 +42,16 @@ namespace Tests {
 
             Assert.That(items.Count() == 2);
         }
+
+        [Test]
+        public void GenericsTest()
+        { 
+            provider = new DependencyProvider(config);
+
+            var item = provider.Resolve<IService<SomeRepository>>();
+
+            Assert.That(item != null);
+        }
+
     }
 }
