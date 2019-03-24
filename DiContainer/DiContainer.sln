@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.28711.60
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiContainer.Core", "DiContainer.Core\DiContainer.Core.csproj", "{B0E42344-3FD5-42D5-854A-A5B83F671183}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiContainer.Tests", "DiContainer.Tests\DiContainer.Tests.csproj", "{5F30BED9-B7E1-426C-8390-EDDB204768D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B0E42344-3FD5-42D5-854A-A5B83F671183}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0E42344-3FD5-42D5-854A-A5B83F671183}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0E42344-3FD5-42D5-854A-A5B83F671183}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F30BED9-B7E1-426C-8390-EDDB204768D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F30BED9-B7E1-426C-8390-EDDB204768D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F30BED9-B7E1-426C-8390-EDDB204768D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F30BED9-B7E1-426C-8390-EDDB204768D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

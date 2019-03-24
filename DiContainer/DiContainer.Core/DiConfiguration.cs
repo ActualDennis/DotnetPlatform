@@ -6,6 +6,11 @@ using System.Text;
 namespace DiContainer.Core {
     public class DiConfiguration {
 
+        public DiConfiguration()
+        {
+            Configuration = new List<ContainerEntity>();
+        }
+
         public List<ContainerEntity> Configuration { get; private set; }
         
         public void RegisterTransient<TInterface, TImplementation>() 
@@ -22,13 +27,18 @@ namespace DiContainer.Core {
             RegisterCore<TInterface, TImplementation>(ObjLifetime.Singleton);
         }
 
+        public ObjLifetime GetObjectLifeTime(Type implType)
+        {
+            return (from conf in Configuration from impl in conf.Implementations where impl.ImplType == implType select impl.LifeTime).First();
+        }
+
         private void RegisterCore<TInterface, TImplementation>(ObjLifetime lifetime)
         {
             var interfaceType = typeof(TInterface);
 
             var implementationType = typeof(TImplementation);
 
-            if (!implementationType.IsAssignableFrom(interfaceType))
+            if (!interfaceType.IsAssignableFrom(implementationType))
                 throw new InvalidOperationException($"Type {implementationType.ToString()} is not assignable from {interfaceType.ToString()}");
 
             if (implementationType.IsAbstract || implementationType.IsInterface)
@@ -39,7 +49,7 @@ namespace DiContainer.Core {
                 where x.InterfaceType == interfaceType
                 select x;
 
-            if (entity == null)
+            if (entity.Count().Equals(0))
             {
                 Configuration.Add(new ContainerEntity()
                 {
