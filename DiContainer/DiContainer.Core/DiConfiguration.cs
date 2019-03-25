@@ -51,6 +51,33 @@ namespace DiContainer.Core {
 
         private void RegisterCore(Type interfaceType, Type implementationType,  ObjLifetime lifetime)
         {
+            //Registration 'as-self'
+            if(interfaceType == implementationType)
+            {
+                var Entity =
+                   from x in Configuration
+                   where x.InterfaceType == interfaceType
+                   select x;
+
+                if (Entity.Count().Equals(0))
+                {
+                    Configuration.Add(new ContainerEntity()
+                    {
+                        InterfaceType = implementationType,
+                        Implementations = new List<Implementation>()
+                        {
+                            new Implementation()
+                            {
+                                ImplType = interfaceType,
+                                LifeTime = lifetime
+                            }
+                        }
+                    });
+                }
+
+                return;
+            }
+
             if (implementationType.GetInterfaces().FirstOrDefault(x => x.Name == interfaceType.Name) == null)
                 throw new InvalidOperationException($"Type {implementationType.ToString()} is not assignable from {interfaceType.ToString()}");
 
@@ -74,7 +101,7 @@ namespace DiContainer.Core {
                             LifeTime = lifetime
                         }
                     },
-                    InterfaceType = interfaceType
+                    InterfaceType = interfaceType,
                 });
 
                 return;
@@ -85,5 +112,6 @@ namespace DiContainer.Core {
 
             entity.First().Implementations.Add(new Implementation() { ImplType = implementationType, LifeTime = lifetime });
         }
+
     }
 }

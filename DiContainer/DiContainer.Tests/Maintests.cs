@@ -76,5 +76,17 @@ namespace Tests {
 
             Assert.NotNull(item);
         }
+
+        [Test]
+        public void AsSelfTest()
+        {
+            config.RegisterTransient<SomeRepository, SomeRepository>();
+            provider = new DependencyProvider(config);
+            SomeRepository item = null;
+
+            Assert.DoesNotThrow(() => item = provider.Resolve<SomeRepository>());
+
+            Assert.NotNull(item);
+        }
     }
 }

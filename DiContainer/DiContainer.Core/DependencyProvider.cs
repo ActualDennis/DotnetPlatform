@@ -50,24 +50,11 @@ namespace DiContainer.Core {
 
             var result = new List<Object>();
 
-            foreach (var impl in entity.Implementations)
+            var implCount = entity.Implementations?.Count();
+
+            for (int implementation = 0; implCount != null && implementation < implCount; ++implementation)
             {
-                var constructorDependencies = GetConstructorDependencies(impl.ImplType, interfaceType, IsOpenGenerics);
-
-                if (constructorDependencies.Count().Equals(0))
-                {
-                    result.Add(CreateObjectCore(null, impl.ImplType, interfaceType, IsOpenGenerics));
-                    continue;
-                }
-
-                var parametersToPass = new object[constructorDependencies.Count()];
-
-                for(int dependency = 0; dependency < constructorDependencies.Count(); ++dependency)
-                {
-                    parametersToPass[dependency] = ResolveCore(constructorDependencies[dependency]);
-                }
-
-                result.Add(CreateObjectCore(parametersToPass, impl.ImplType, interfaceType, IsOpenGenerics));
+                result.Add(CreateObjectRecursive(entity.Implementations[implementation].ImplType, interfaceType, IsOpenGenerics));
             }
 
             if (IsEnumerable)
@@ -76,53 +63,70 @@ namespace DiContainer.Core {
                 return result.First();
         }
 
-        private Object CreateObjectCore(object[] constructorParams, Type t, Type interfaceType, bool IsOpenGenerics)
+        private Object CreateObjectRecursive(Type classType, Type interfaceType, bool IsOpenGenerics)
         {
-            var lifeTime = m_Configuration.GetObjectLifeTime(t);
+            var constructorDependencies = GetConstructorDependencies(classType, interfaceType, IsOpenGenerics);
+
+            if (constructorDependencies.Count().Equals(0))
+              return CreateObjectCore(null, classType, interfaceType, IsOpenGenerics);
+
+            var parametersToPass = new object[constructorDependencies.Count()];
+
+            for (int dependency = 0; dependency < constructorDependencies.Count(); ++dependency)
+            {
+                parametersToPass[dependency] = ResolveCore(constructorDependencies[dependency]);
+            }
+
+            return CreateObjectCore(parametersToPass, classType, interfaceType, IsOpenGenerics);
+        }
+
+        private Object CreateObjectCore(object[] constructorParams, Type implementationType, Type interfaceType, bool IsOpenGenerics)
+        {
+            var lifeTime = m_Configuration.GetObjectLifeTime(implementationType);
 
             if (lifeTime == ObjLifetime.Transient)
             {
                 if (IsOpenGenerics)
-                    return CreateGenericObject(constructorParams, t, interfaceType, lifeTime);
+                    return CreateGenericObject(constructorParams, implementationType, interfaceType, lifeTime);
 
-                return CreateObjInternal(constructorParams, t, interfaceType, lifeTime);
+                return CreateObjInternal(constructorParams, implementationType, interfaceType, lifeTime);
             }
             else if (lifeTime == ObjLifetime.Singleton)
             {
-                if (IsObjectCreated(t))
-                    return GetCreatedObject(t);
+                if (IsObjectCreated(implementationType))
+                    return GetCreatedObject(implementationType);
 
                 if (IsOpenGenerics)
-                    return CreateGenericObject(constructorParams, t, interfaceType, lifeTime);
+                    return CreateGenericObject(constructorParams, implementationType, interfaceType, lifeTime);
 
-                return CreateObjInternal(constructorParams, t, interfaceType, lifeTime);
+                return CreateObjInternal(constructorParams, implementationType, interfaceType, lifeTime);
             }
 
             throw new NotImplementedException();
         }
 
-        private Object CreateGenericObject(object[] constructorParams, Type t, Type interfaceType, ObjLifetime lifetime)
+        private Object CreateGenericObject(object[] constructorParams, Type implementationType, Type interfaceType, ObjLifetime lifetime)
         {
             //Set object type arguments to ones mentioned in container.
-            return CreateObjInternal(constructorParams, t.MakeGenericType(interfaceType.GenericTypeArguments), interfaceType, lifetime);
+            return CreateObjInternal(constructorParams, implementationType.MakeGenericType(interfaceType.GenericTypeArguments), interfaceType, lifetime);
         }
 
-        private Object CreateObjInternal(object[] constructorParams, Type t, Type interfaceType, ObjLifetime lifetime)
+        private Object CreateObjInternal(object[] constructorParams, Type implementationType, Type interfaceType, ObjLifetime lifetime)
         {
             object createdObj;
 
             if (constructorParams == null)
             {
-                createdObj = Activator.CreateInstance(t);
+                createdObj = Activator.CreateInstance(implementationType);
             }
             else
             {
-                createdObj = GetConstructor(t).Invoke(constructorParams);
+                createdObj = GetConstructor(implementationType).Invoke(constructorParams);
             }
 
             CreatedObjects.Add(new CreatedObject()
             {
-                ObjType = t,
+                ObjType = implementationType,
                 Interface = interfaceType,
                 SingletonInstance = (lifetime == ObjLifetime.Singleton) ? createdObj : null
             });
@@ -159,25 +163,24 @@ namespace DiContainer.Core {
 
             foreach(var dependency in dependencies)
             {
-                if (dependency.IsGenericParameter)
-                {
-                    var resolvedArgs = interfaceType.GetGenericArguments();
-                    var genericArgs = interfaceType.GetGenericTypeDefinition().GetGenericArguments();
-                    int index = 0;
-
-                    if ((index = Array.FindIndex(genericArgs, x => x.Name == dependency.Name)) == -1)
-                        throw new ArgumentException("Dependency in constructor was not present in the interface.");
-
-                    //if there's more than 1 constraint, obviously, it won't work
-
-                    var constraints = genericArgs[index].GetGenericParameterConstraints();
-
-                    result.Add(constraints[0]);
-                }
-                else
+                if (!dependency.IsGenericParameter)
                 {
                     result.Add(dependency);
+                    continue;
                 }
+
+                var resolvedArgs = interfaceType.GetGenericArguments();
+                var genericArgs = interfaceType.GetGenericTypeDefinition().GetGenericArguments();
+                int index = 0;
+
+                if ((index = Array.FindIndex(genericArgs, x => x.Name == dependency.Name)) == -1)
+                    throw new ArgumentException("Dependency in constructor was not present in the interface.");
+
+                //if there's more than 1 constraint, obviously, it won't work
+
+                var constraints = genericArgs[index].GetGenericParameterConstraints();
+
+                result.Add(constraints[0]);
             }
 
             return result;
