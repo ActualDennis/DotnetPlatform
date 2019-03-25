@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DiContainer.Tests.TestData {
+namespace DenInject.Tests.TestData {
     public class User : IUser {
         public int Balance { get; set; } = 512;
         public int GetBalance() => Balance;

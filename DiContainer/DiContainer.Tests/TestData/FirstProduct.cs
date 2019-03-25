@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DiContainer.Tests.TestData {
+namespace DenInject.Tests.TestData {
     public class FirstProduct : IProduct {
         public IUser user { get; set; }
 

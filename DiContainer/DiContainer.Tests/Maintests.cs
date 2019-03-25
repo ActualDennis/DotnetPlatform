@@ -1,8 +1,7 @@
-using DiContainer.Core;
-using DiContainer.Tests.TestData;
-using DiContainer.Tests.TestData.Generics;
+using DenInject.Core;
+using DenInject.Tests.TestData;
+using DenInject.Tests.TestData.Generics;
 using NUnit.Framework;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
