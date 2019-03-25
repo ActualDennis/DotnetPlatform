@@ -15,11 +15,17 @@ namespace DiContainer.Core {
 
         public void RegisterTransient(Type interfaceType, Type implementationType)
         {
+            if (interfaceType.IsValueType || implementationType.IsValueType)
+                throw new InvalidOperationException("Both implementation and interface should be reference types.");
+
             RegisterCore(interfaceType, implementationType, ObjLifetime.Transient);
         }
 
         public void RegisterSingleton(Type interfaceType, Type implementationType)
         {
+            if (interfaceType.IsValueType || implementationType.IsValueType)
+                throw new InvalidOperationException("Both implementation and interface should be reference types.");
+
             RegisterCore(interfaceType, implementationType, ObjLifetime.Singleton);
         }
 
@@ -45,8 +51,7 @@ namespace DiContainer.Core {
 
         private void RegisterCore(Type interfaceType, Type implementationType,  ObjLifetime lifetime)
         {
-
-            if (!interfaceType.IsAssignableFrom(implementationType))
+            if (implementationType.GetInterfaces().FirstOrDefault(x => x.Name == interfaceType.Name) == null)
                 throw new InvalidOperationException($"Type {implementationType.ToString()} is not assignable from {interfaceType.ToString()}");
 
             if (implementationType.IsAbstract || implementationType.IsInterface)

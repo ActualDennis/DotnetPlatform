@@ -23,10 +23,12 @@ namespace Tests {
             config.RegisterTransient<IUser, User>();
 
             provider = new DependencyProvider(config);
-            
-            var item = provider.Resolve<IProduct>();
 
-            Assert.That(item != null);
+            IProduct item = null;
+
+            Assert.DoesNotThrow(() => item = provider.Resolve<IProduct>());
+
+            Assert.NotNull(item);
         }
 
         [Test]
@@ -38,20 +40,41 @@ namespace Tests {
 
             provider = new DependencyProvider(config);
 
-            var items = provider.Resolve<IEnumerable<IProduct>>();
+            IEnumerable<IProduct> items = null;
+
+            Assert.DoesNotThrow(() => items = provider.Resolve<IEnumerable<IProduct>>());
+
+            Assert.NotNull(items);
 
             Assert.That(items.Count() == 2);
         }
 
         [Test]
-        public void GenericsTest()
-        { 
+        public void OpenGenericsTest()
+        {
+            config.RegisterTransient<IRepository, SomeRepository>();
+            config.RegisterTransient(typeof(IService<>), typeof(SomeService<>));
             provider = new DependencyProvider(config);
 
-            var item = provider.Resolve<IService<SomeRepository>>();
+            IService<SomeRepository> item = null;
 
-            Assert.That(item != null);
+            Assert.DoesNotThrow( () => item = provider.Resolve<IService<SomeRepository>>());
+
+            Assert.NotNull(item);
         }
 
+        [Test]
+        public void GenericsTest()
+        {
+            config.RegisterTransient<IRepository, SomeRepository>();
+            config.RegisterTransient<IService<IRepository>, SomeService<IRepository>>();
+            provider = new DependencyProvider(config);
+
+            IService<IRepository> item = null;
+
+            Assert.DoesNotThrow(() => item = provider.Resolve<IService<IRepository>>());
+
+            Assert.NotNull(item);
+        }
     }
 }
