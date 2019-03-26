@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>DenInject.Core</id>
+    <version>1.0.1</version>
+    <title>DenInject.Core</title>
+    <authors>actualdennis</authors>
+    <owners>actualdennis</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Simple dependency injection container.</description>
+    <releaseNotes>Added validator for Di configuration.</releaseNotes>
+    <copyright>Copyright 2019</copyright>
+  </metadata>
+</package>

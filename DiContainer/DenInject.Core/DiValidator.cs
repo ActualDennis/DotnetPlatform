@@ -13,8 +13,6 @@ namespace DenInject.Core {
             this.entities = entities;
         }
 
-        private Type newType { get; set; }
-
         private Stack<Type> Dependencies { get; set; }
 
         private List<ContainerEntity> entities { get; set; }
@@ -59,16 +57,6 @@ namespace DenInject.Core {
             }
 
             return false;
-        }
-
-        private ParameterInfo[] GetTypeConstructorParameters(Type t)
-        {
-            var typeConstructors = newType.GetConstructors();
-
-            if (typeConstructors.Length.Equals(0))
-                return new ParameterInfo[0];
-
-            return typeConstructors[0].GetParameters();
         }
     }
 }
