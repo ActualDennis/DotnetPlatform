@@ -8,20 +8,41 @@ namespace DenInject.Core {
     public class DependencyProvider {
         private DiConfiguration m_Configuration { get; set; }
 
+        private DiValidator Validator { get; set; }
+
         private List<CreatedObject> SingletonObjects { get; set; }
 
         public DependencyProvider(DiConfiguration config)
         {
             m_Configuration = config;
             SingletonObjects = new List<CreatedObject>();
+            Validator = new DiValidator(config.Configuration);
         }
 
+        /// <summary>
+        /// Resolves object earlier registered in DiConfiguration.
+        /// Supports passing a IEnumerable<typeparamref name="TInterface"/> 
+        /// , which will return all dependencies of <typeparamref name="TInterface"/>
+        /// </summary>
+        /// <typeparam name="TInterface">Type of object.</typeparam>
+        /// <returns></returns>
         public TInterface Resolve<TInterface>()
         {
             return (TInterface)ResolveCore(typeof(TInterface));
         }
 
-        public Object ResolveCore(Type interfaceType)
+        public void ValidateConfig()
+        {
+            foreach(var entity in m_Configuration.Configuration)
+            {
+                foreach(var impl in entity.Implementations)
+                {
+                    Validator.Validate(impl.ImplType);
+                }
+            }
+        }
+
+        private Object ResolveCore(Type interfaceType)
         {
             bool IsEnumerable = false;
 
@@ -37,17 +58,18 @@ namespace DenInject.Core {
                 .Find(x => x.InterfaceType == interfaceType) 
                 ;
 
+            //if no type was found, probably we are using open generics. If not, entity was not registered.
             if (entity == null && interfaceType.IsGenericType)
-                entity = //if no type was found, probably we are using open generics. If not, entity was not registered.
-                m_Configuration
-                .Configuration
-                .Find(x => x.InterfaceType == interfaceType.GetGenericTypeDefinition());
+                entity = m_Configuration
+                        .Configuration
+                        .Find(x => x.InterfaceType == interfaceType.GetGenericTypeDefinition());
+
 
 
             if (entity == null)
                 throw new InvalidOperationException($"Dependency {interfaceType.ToString()} was not registered in container.");
 
-            bool IsOpenGenerics = interfaceType.IsGenericType && !entity.InterfaceType.IsConstructedGenericType;
+            bool IsOpenGenerics = entity.InterfaceType.IsGenericTypeDefinition;
 
             var result = new List<Object>();
 
@@ -178,9 +200,7 @@ namespace DenInject.Core {
                 int index = 0;
 
                 if ((index = Array.FindIndex(genericArgs, x => x.Name == dependency.Name)) == -1)
-                    throw new ArgumentException("Dependency in constructor was not present in the interface.");
-
-                //if there's more than 1 constraint, obviously, it won't work
+                    throw new ArgumentException("Dependency in constructor was not present in the interface generic arguments.");
 
                 var constraints = genericArgs[index].GetGenericParameterConstraints();
 

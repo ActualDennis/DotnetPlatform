@@ -54,26 +54,7 @@ namespace DenInject.Core {
             //Registration 'as-self'
             if(interfaceType == implementationType)
             {
-                var Entity =
-                   from x in Configuration
-                   where x.InterfaceType == interfaceType
-                   select x;
-
-                if (Entity.Count().Equals(0))
-                {
-                    Configuration.Add(new ContainerEntity()
-                    {
-                        InterfaceType = implementationType,
-                        Implementations = new List<Implementation>()
-                        {
-                            new Implementation()
-                            {
-                                ImplType = interfaceType,
-                                LifeTime = lifetime
-                            }
-                        }
-                    });
-                }
+                RegisterAsSelf(implementationType, lifetime);
 
                 return;
             }
@@ -111,6 +92,30 @@ namespace DenInject.Core {
                 return;
 
             entity.First().Implementations.Add(new Implementation() { ImplType = implementationType, LifeTime = lifetime });
+        }
+
+        private void RegisterAsSelf(Type implementationType, ObjLifetime lifetime)
+        {
+            var Entity =
+                   from x in Configuration
+                   where x.InterfaceType == implementationType
+                   select x;
+
+            if (Entity.Count().Equals(0))
+            {
+                Configuration.Add(new ContainerEntity()
+                {
+                    InterfaceType = implementationType,
+                    Implementations = new List<Implementation>()
+                        {
+                            new Implementation()
+                            {
+                                ImplType = implementationType,
+                                LifeTime = lifetime
+                            }
+                        }
+                });
+            }
         }
 
     }

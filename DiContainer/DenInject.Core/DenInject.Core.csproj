@@ -45,6 +45,7 @@
     <Compile Include="CreatedObject.cs" />
     <Compile Include="DependencyProvider.cs" />
     <Compile Include="DiConfiguration.cs" />
+    <Compile Include="DiValidator.cs" />
     <Compile Include="Extensions\ListObjectExtensions.cs" />
     <Compile Include="Implementation.cs" />
     <Compile Include="ObjLifetime.cs" />

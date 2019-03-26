@@ -25,6 +25,8 @@ namespace Tests {
 
             IProduct item = null;
 
+            Assert.DoesNotThrow(() => provider.ValidateConfig());
+
             Assert.DoesNotThrow(() => item = provider.Resolve<IProduct>());
 
             Assert.NotNull(item);
@@ -40,6 +42,8 @@ namespace Tests {
             provider = new DependencyProvider(config);
 
             IEnumerable<IProduct> items = null;
+
+            Assert.DoesNotThrow(() => provider.ValidateConfig());
 
             Assert.DoesNotThrow(() => items = provider.Resolve<IEnumerable<IProduct>>());
 
@@ -57,6 +61,8 @@ namespace Tests {
 
             IService<SomeRepository> item = null;
 
+            Assert.DoesNotThrow( () => provider.ValidateConfig());
+
             Assert.DoesNotThrow( () => item = provider.Resolve<IService<SomeRepository>>());
 
             Assert.NotNull(item);
@@ -71,6 +77,8 @@ namespace Tests {
 
             IService<IRepository> item = null;
 
+            Assert.DoesNotThrow(() => provider.ValidateConfig());
+
             Assert.DoesNotThrow(() => item = provider.Resolve<IService<IRepository>>());
 
             Assert.NotNull(item);
@@ -82,6 +90,8 @@ namespace Tests {
             config.RegisterTransient<SomeRepository, SomeRepository>();
             provider = new DependencyProvider(config);
             SomeRepository item = null;
+
+            Assert.DoesNotThrow(() => provider.ValidateConfig());
 
             Assert.DoesNotThrow(() => item = provider.Resolve<SomeRepository>());
 
