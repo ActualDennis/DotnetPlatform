@@ -55,7 +55,6 @@ namespace DenInject.Core {
             if(interfaceType == implementationType)
             {
                 RegisterAsSelf(implementationType, lifetime);
-
                 return;
             }
 
@@ -100,6 +99,9 @@ namespace DenInject.Core {
                    from x in Configuration
                    where x.InterfaceType == implementationType
                    select x;
+
+            if (implementationType.IsInterface)
+                throw new InvalidOperationException("Cannot register interface as-self.");
 
             if (Entity.Count().Equals(0))
             {

@@ -2,6 +2,7 @@ using DenInject.Core;
 using DenInject.Tests.TestData;
 using DenInject.Tests.TestData.Generics;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -94,6 +95,31 @@ namespace Tests {
             Assert.DoesNotThrow(() => provider.ValidateConfig());
 
             Assert.DoesNotThrow(() => item = provider.Resolve<SomeRepository>());
+
+            Assert.NotNull(item);
+        }
+
+        [Test]
+
+        public void IenumerableTest()
+        {
+            Assert.Throws<InvalidOperationException>(() => config.RegisterTransient<IEnumerable<IRepository>, IEnumerable<IRepository>>());
+        }
+
+        [Test]
+        public void IenumerableTest2()
+        {
+            config.RegisterTransient<IRepository, SomeRepository>();
+            config.RegisterTransient<IEnumerable<IRepository>, List<IRepository>>();
+            provider = new DependencyProvider(config);
+
+            IEnumerable<IRepository> item = null;
+
+            Assert.DoesNotThrow(() => provider.ValidateConfig());
+
+            Assert.DoesNotThrow(() => item = provider.Resolve<IEnumerable<IRepository>>());
+
+            Assert.That(item.GetType() == typeof(List<IRepository>));
 
             Assert.NotNull(item);
         }

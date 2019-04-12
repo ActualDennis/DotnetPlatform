@@ -44,12 +44,23 @@ namespace DenInject.Core {
 
         private Object ResolveCore(Type interfaceType)
         {
-            bool IsEnumerable = false;
+            bool IsAllImplementationsRequested = false;
 
             if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
-                interfaceType = interfaceType.GetGenericArguments()[0];
-                IsEnumerable = true;
+                //check if this is request for all implementations / or only one 
+                //i.e IEnumerable<T> => T implementations or IEnumerable<T> implementation
+
+                var IsenumerableRegistered = 
+                m_Configuration
+                .Configuration  //IEnumerable<T> implementation exists
+                .Any(x => x.InterfaceType == interfaceType);
+
+                if (!IsenumerableRegistered)
+                {
+                    interfaceType = interfaceType.GetGenericArguments()[0];
+                    IsAllImplementationsRequested = true;
+                }
             }
 
             var entity = 
@@ -80,7 +91,7 @@ namespace DenInject.Core {
                 result.Add(CreateObjectRecursive(entity.Implementations[implementation].ImplType, interfaceType, IsOpenGenerics));
             }
 
-            if (IsEnumerable)
+            if (IsAllImplementationsRequested)
                 return result.ListObjToEnumerableType(interfaceType);
             else
                 return result.First();

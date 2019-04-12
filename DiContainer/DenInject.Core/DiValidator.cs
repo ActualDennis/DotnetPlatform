@@ -20,7 +20,7 @@ namespace DenInject.Core {
         public void Validate(Type newType)
         {
             if (ContainsCircularDependencies(newType))
-                throw new ArgumentException("Type did contain circular dependencies.");
+                throw new ArgumentException($"Type {newType.ToString()} did contain circular dependencies.");
 
             var typeConstructors = newType.GetConstructors();
 
