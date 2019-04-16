@@ -123,5 +123,23 @@ namespace Tests {
 
             Assert.NotNull(item);
         }
+
+        [Test] 
+        public void SingletonInstanceTest()
+        {
+            config.RegisterSingleton<IUser>(new User() { Balance = 5427 });
+
+            provider = new DependencyProvider(config);
+
+            IUser item = null;
+
+            Assert.DoesNotThrow(() => provider.ValidateConfig());
+
+            Assert.DoesNotThrow(() => item = provider.Resolve<IUser>());
+
+            Assert.That(item.GetBalance() == 5427);
+
+            Assert.NotNull(item);
+        }
     }
 }

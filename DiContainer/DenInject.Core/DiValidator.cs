@@ -40,7 +40,9 @@ namespace DenInject.Core {
 
                 foreach(List<Implementation> implementation in implementations)
                 {
-                    Dependencies.Push(newType); //if there are many implementations we'll always use first, as can be seen in DependencyProvider.cs
+                    Dependencies.Push(newType);
+                                                            //if there are many implementations we'll always use first while resolving, 
+                                                            //as can be seen in DependencyProvider.cs, so won't check there for other implementations
                     Validate(implementation.First().ImplType);
                     Dependencies.Pop();
                 }

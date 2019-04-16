@@ -5,6 +5,7 @@ using System.Text;
 namespace DenInject.Core {
     public enum ObjLifetime {
         Singleton,
-        Transient   
+        SingletonInstance,
+        Transient
     }
 }

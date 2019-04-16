@@ -48,7 +48,7 @@ namespace DenInject.Core {
 
             if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
-                //check if this is request for all implementations / or only one 
+                //check if this is request for all implementations / only one 
                 //i.e IEnumerable<T> => T implementations or IEnumerable<T> implementation
 
                 var IsenumerableRegistered = 
@@ -66,8 +66,7 @@ namespace DenInject.Core {
             var entity = 
                 m_Configuration
                 .Configuration
-                .Find(x => x.InterfaceType == interfaceType) 
-                ;
+                .Find(x => x.InterfaceType == interfaceType);
 
             //if no type was found, probably we are using open generics. If not, entity was not registered.
             if (entity == null && interfaceType.IsGenericType)
@@ -80,15 +79,14 @@ namespace DenInject.Core {
             if (entity == null)
                 throw new InvalidOperationException($"Dependency {interfaceType.ToString()} was not registered in container.");
 
-            bool IsOpenGenerics = entity.InterfaceType.IsGenericTypeDefinition;
-
             var result = new List<Object>();
 
             var implCount = entity.Implementations?.Count();
 
+
             for (int implementation = 0; implCount != null && implementation < implCount; ++implementation)
             {
-                result.Add(CreateObjectRecursive(entity.Implementations[implementation].ImplType, interfaceType, IsOpenGenerics));
+                result.Add(CreateObjectRecursive(entity.Implementations[implementation].ImplType, interfaceType, entity.InterfaceType.IsGenericTypeDefinition));
             }
 
             if (IsAllImplementationsRequested)
@@ -118,25 +116,35 @@ namespace DenInject.Core {
         {
             var lifeTime = m_Configuration.GetObjectLifeTime(implementationType);
 
-            if (lifeTime == ObjLifetime.Transient)
+            switch (lifeTime)
             {
-                if (IsOpenGenerics)
-                    return CreateGenericObject(constructorParams, implementationType, interfaceType, lifeTime);
+                case ObjLifetime.Transient:
+                    {
+                         if (IsOpenGenerics)
+                            return CreateGenericObject(constructorParams, implementationType, interfaceType, lifeTime);
 
-                return CreateObjInternal(constructorParams, implementationType, interfaceType, lifeTime);
+                        return CreateObjInternal(constructorParams, implementationType, interfaceType, lifeTime);
+
+                    }
+                case ObjLifetime.Singleton:
+                    {
+                        if (IsObjectCreated(implementationType))
+                            return GetCreatedObject(implementationType);
+
+                        if (IsOpenGenerics)
+                            return CreateGenericObject(constructorParams, implementationType, interfaceType, lifeTime);
+
+                        return CreateObjInternal(constructorParams, implementationType, interfaceType, lifeTime);
+                    }
+                case ObjLifetime.SingletonInstance:
+                    {
+                        return m_Configuration.GetSingletonInstance(interfaceType);
+                    }
+                default:
+                    {
+                        throw new NotImplementedException();
+                    }
             }
-            else if (lifeTime == ObjLifetime.Singleton)
-            {
-                if (IsObjectCreated(implementationType))
-                    return GetCreatedObject(implementationType);
-
-                if (IsOpenGenerics)
-                    return CreateGenericObject(constructorParams, implementationType, interfaceType, lifeTime);
-
-                return CreateObjInternal(constructorParams, implementationType, interfaceType, lifeTime);
-            }
-
-            throw new NotImplementedException();
         }
 
         private Object CreateGenericObject(object[] constructorParams, Type implementationType, Type interfaceType, ObjLifetime lifetime)
